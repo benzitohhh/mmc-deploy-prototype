@@ -272,8 +272,8 @@
     ];
    
     var deployments = [
-        new Deployment(301, "dep1_prod_lots", applications.slice(0,3), servers.slice(0,2), true),
-        new Deployment(302, "dep2_staging_lots", applications.slice(0,3), servers.slice(2,3), true),
+        // new Deployment(301, "dep1_prod_lots", applications.slice(0,3), servers.slice(0,2), true),
+        // new Deployment(302, "dep2_staging_lots", applications.slice(0,3), servers.slice(2,3), true),
         new Deployment(303, "dep3_staging_one", applications.slice(0,1), servers.slice(2,3), false)
     ];
     
