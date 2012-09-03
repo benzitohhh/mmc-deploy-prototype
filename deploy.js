@@ -228,14 +228,6 @@
             // the DOM element representing this deployment
             var el = $(domArr[1]);
             
-            // add details popover (temporary! TODO: find better solution for displaying details)
-            var details = getDetailsAsHtml(deployment);
-            el.popover({
-                content: details,
-                trigger: 'hover',
-                placement: 'top'
-            });
-            
             // bind "drop" handlers
             el.bind("dragenter", function(event) {
                 $(this).addClass("over");
@@ -256,51 +248,13 @@
                     var server = self.getServer(sourceId);
                     deployment.addServer(server);
                 }
-                    
-                // at this point, mode is updated ok.
-                // BUT... popover is not updating...
-                // So here is a hack to reset it...                
-                el.popover('destroy');
-                el.popover({
-                    content: getDetailsAsHtml(deployment),
-                    trigger: 'hover',
-                    placement: 'top'
-                });
-                
             });   
         };
         
-        function getDetailsAsHtml(deployment) {
-            // TEMPORARY display
-            // TODO: this should be
-            //       a) done as a template
-            //       b) be modifiable
-            //       c) be persistant
-            
-            var apps = deployment.applications();
-            var servers = deployment.servers();
-            var strContent = "";
-            strContent += "<h5>";
-            strContent += "Apps: ";
-            strContent += "</h5>";
-            strContent += "<p>";
-            for (var i=0; i < apps.length; i++) {
-                strContent += apps[i].name();
-                strContent += i==(apps.length-1) ? "" : ", ";
-            };
-            strContent += "<\p>";
-            strContent += "<br/>";
-            strContent += "<h5>";
-            strContent += "Servers: ";
-            strContent += "</h5>";
-            strContent += "<p>";
-            for (var i=0; i < servers.length; i++) {
-                strContent += servers[i].name();
-                strContent += i==(servers.length-1) ? "" : ", ";
-            };
-            strContent += "</p>";
-            return strContent;
-        }    
+        self.postRenderDeploymentApplication = function(domArr, application) {
+            console.log("yay");
+        };
+        
     }
     
     // ==== mock initial data =============================

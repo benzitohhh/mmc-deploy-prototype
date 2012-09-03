@@ -87,6 +87,8 @@
                 <th></th>
                 <th>name</th>
                 <th>status</th>
+                <th>apps</th>
+                <th>svrs</th>
               </tr>
             </thead>
             <tbody data-bind="foreach: {data: deployments, afterRender: postRenderDeployment}">
@@ -95,8 +97,14 @@
                     <input type="checkbox" class="selectedEntity" />
                     <input type="hidden" name="id" data-bind="value: id" />
                 </td>
-                <td><input type="text" data-bind="value: name"></input></td>
+                <td><input type="text" data-bind="value: name"/></td>
                 <td data-bind="text: status"></td>
+                <td data-bind="foreach: {data: applications}">
+                    <p data-bind="text: name"></p>
+                </td>
+                <td data-bind="foreach: {data: servers}">
+                    <p data-bind="text: name"></p>
+                </td>
               </tr>
             </tbody>
           </table>
