@@ -252,7 +252,7 @@
         };
         
         self.postRenderDeploymentApplication = function(domArr, application) {
-            console.log("yay");
+            // TODO:
         };
         
     }
