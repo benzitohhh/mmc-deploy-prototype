@@ -4,9 +4,6 @@
         $("#hero-unit #instructions").toggle(500);
     });
     
-    // === drag n drop ========================= 
-    // TODO:
-
     function Application(id, name) {
         var self = this;
         self.id = id;
@@ -330,8 +327,5 @@
     
     var vm = new DeployViewModel(applications, servers, deployments);
     ko.applyBindings(vm);
-
-    // TODO: temporarily export vm for debug TODO: remove!!!
-    this.vm = vm;
     
 })();
