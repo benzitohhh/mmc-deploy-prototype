@@ -59,23 +59,22 @@
         <ol id="instructions" style="display: none">
           <li>To create a new deployment / application / server, select from the action menus.</li>
           <li>To assign apps or servers to your deployment, drag them on to the deployment</li>
-          <li>To see details of a deployment, hover over it.</li>
+          <li>To expand/hide details of a deployment, double-click it.</li>
           <li>To go live or undeploy, mark the checkbox and use the action menu</li>
           <li>To remove apps / servers from your deployment, mark the checkbox beside them, then use the action dropdown</li>
           
         </ol>
       </div>
 
-      <div class="row-fluid"><!-- start: row fluid -->
-      
-        <div id="deployments" class="span6 well">
+      <div id="deployments" class="row-fluid">
+        <div class="span6 well">
           <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
               Action
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#" data-bind="click: addDeployment"><i class="icon-plus-sign"></i> New</a></li>
+              <li><a href="#"><i class="icon-plus-sign"></i> New</a></li>
               <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
               <li><a href="#"><i class="icon-plane"></i> Deploy</a></li>
               <li><a href="#"><i class="icon-stop"></i> Undeploy</a></li>
@@ -90,12 +89,37 @@
                 <th>name</th>
               </tr>
             </thead>
-            <tbody data-bind="foreach: {data: deployments, afterRender: postRenderDeployment}">
-              <tr data-bind="css: { success: isDeployed, error: !isDeployed() }" >
-                <input type="hidden" name="id" data-bind="value: id" />
+            <tbody>
+              <tr class="success">
+                <input type="hidden" name="" data-bind="value: name" />
                 <td><input type="checkbox" name="vehicle" value="Bike" /></td>
-                <td data-bind="text: status"></td>
-                <td><input type="text" data-bind="value: name"></input></td>
+                <td>deployed ok</td>
+                <td>Some deployment bla</td>
+              </tr>
+              <tr class="success">
+                <td></td>
+                <td>deployed ok</td>
+                <td>Some deployment bla</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Some deployment bla</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Some deployment bla</td>
+              </tr>
+              <tr class="error">
+                <td></td>
+                <td>failed!</td>
+                <td>Some deployment bla</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Some deployment bla</td>
               </tr>
             </tbody>
           </table>
@@ -108,7 +132,7 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#" data-bind="click: addApplication"><i class="icon-plus-sign"></i> New</a></li>
+              <li><a href="#"><i class="icon-plus-sign"></i> New</a></li>
               <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
             </ul>
           </div>
@@ -120,11 +144,21 @@
                 <th>name</th>
               </tr>
             </thead>
-            <tbody data-bind="foreach: allApplications">
+            <tbody>
               <tr>
-                <input type="hidden" name="id" data-bind="value: id" />
-                <td><input type="checkbox" name="vehicle" value="Bike" /></td>
-                <td><input type="text" data-bind="value: name"></input></td>
+                <td></td>
+                <td></td>
+                <td>accounting</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>payroll</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>salesforce</td>
               </tr>
             </tbody>
           </table>
@@ -137,7 +171,7 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="#" data-bind="click: addServer"><i class="icon-plus-sign"></i> New</a></li>
+              <li><a href="#"><i class="icon-plus-sign"></i> New</a></li>
               <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
             </ul>
           </div>
@@ -149,17 +183,26 @@
                 <th>name</th>
               </tr>
             </thead>
-            <tbody data-bind="foreach: allServers()">
+            <tbody>
               <tr>
-                <input type="hidden" name="id" data-bind="value: id" />
-                <td><input type="checkbox" name="vehicle" value="Bike" /></td>
-                <td><input type="text" data-bind="value: name"></input></td>
+                <td></td>
+                <td></td>
+                <td>prod1</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>prod2</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>staging</td>
               </tr>
             </tbody>
           </table>
         </div>
-        
-      </div><!-- /row-fluid -->
+      </div>
 
 
     </div> <!-- /container -->

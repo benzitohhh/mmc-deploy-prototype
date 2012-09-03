@@ -1,4 +1,12 @@
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    min-width: 650px;
 }
 
+input[type="text"]
+{
+    padding: 0 0 0 6px;
+    margin:0;
+    width: 100%;
+    background-color: transparent;
+}

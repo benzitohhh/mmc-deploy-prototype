@@ -1,10 +1,10 @@
 (function() {
-    // === general handlers ========================
+    // === handlers ========================
     $("#learn-more-button").click(function() {
         $("#hero-unit #instructions").toggle(500);
     });
     
-    // === bind drag n drop ========================= 
+    // === drag n drop ========================= 
     // TODO:
 
     function Application(id, name) {
@@ -39,6 +39,10 @@
         self.removeServer = function(server) {
             self.servers.remove(server);
         };
+        self.status = ko.computed(function() {
+            return self.isDeployed() ? 'deployed ok' : 'undeployed';
+        });
+        
     }
     
     function DeployViewModel (apps, servers, deploys) {
@@ -51,7 +55,7 @@
         self.deployments = ko.observableArray(deploys);
         
         self.addApplication = function() {
-            self.allApplications.push(new Application(generateNextApplicationId(), ""));
+            self.allApplications.push(new Application(generateNextApplicationId(), "new app"));
         };
         
         self.removeApplication = function(application) {
@@ -64,7 +68,7 @@
         };
         
         self.addServer = function() {
-            self.allServers.push(new Server(generateNextServerId(), ""));
+            self.allServers.push(new Server(generateNextServerId(), "new server"));
         };
         
         self.removeServer = function(server) {
@@ -77,7 +81,7 @@
         };
         
         self.addDeployment = function() {
-            self.deployments.push(new Deployment(generateNextDeploymentId(), "", [], [], false));
+            self.deployments.push(new Deployment(generateNextDeploymentId(), "new deployment", [], [], false));
         };
         
         self.removeDeployment = function(deployment) {
@@ -129,7 +133,47 @@
         
         function generateNextDeploymentId () {
             return generateNextId(self.deployments());
-        }        
+        }
+        
+        self.postRenderDeployment = function(domArr, deployment) {
+            // TEMPORARY display
+            // TODO: this should be
+            //       a) done as a template
+            //       b) be modifiable
+            //       c) be persistant
+            
+            var el = $(domArr[1]);
+            var apps = deployment.applications();
+            var servers = deployment.servers();
+            var strContent = "";
+            strContent += "<h5>";
+            strContent += "Apps: ";
+            strContent += "</h5>";
+            strContent += "<p>";
+            for (var i=0; i < apps.length; i++) {
+                strContent += apps[i].name();
+                strContent += i==(apps.length-1) ? "" : ", ";
+            };
+            strContent += "<\p>";
+            strContent += "<br/>";
+            strContent += "<h5>";
+            strContent += "Servers: ";
+            strContent += "</h5>";
+            strContent += "<p>";
+            for (var i=0; i < servers.length; i++) {
+                strContent += servers[i].name();
+                strContent += i==(servers.length-1) ? "" : ", ";
+            };
+            strContent += "</p>";
+            
+            // add popover
+            el.popover({
+                content: strContent,
+                trigger: 'hover',
+                placement: 'top'
+                
+            });       
+        };    
     }
     
     // ==== mock initial data =============================
@@ -147,8 +191,8 @@
     ];
    
     var deployments = [
-        new Deployment(301, "dep1_prod_lots", applications.slice(0,3), servers.slice(0,2), false),
-        new Deployment(302, "dep2_staging_lots", applications.slice(0,3), servers.slice(2,3), false),
+        new Deployment(301, "dep1_prod_lots", applications.slice(0,3), servers.slice(0,2), true),
+        new Deployment(302, "dep2_staging_lots", applications.slice(0,3), servers.slice(2,3), true),
         new Deployment(303, "dep3_staging_one", applications.slice(0,1), servers.slice(2,3), false)
     ];
     
