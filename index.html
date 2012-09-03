@@ -54,14 +54,14 @@
       <div id="hero-unit" class="hero-unit">
         <h1>Deploy with joy</h1>
         <p><a id="learn-more-button" class="btn btn-primary btn-large pull-right">Learn more »</a></p>
-        <p>A Deployment is a bundle of applications that you deploy to
-          one or more servers.</p>
+        <p>A Deployment is a bundle of Applications that you deploy to
+          one or more Servers.</p>
         <ol id="instructions" style="display: none">
-          <li>To create a new deployment / application / server, select from the action menus.</li>
-          <li>To assign apps or servers to your deployment, drag them on to the deployment</li>
-          <li>To see details of a deployment, hover over it.</li>
-          <li>To go live or undeploy, mark the checkbox and use the action menu</li>
-          <li>To remove apps / servers from your deployment, mark the checkbox beside them, then use the action dropdown</li>
+          <li>To create a new Deployment / Application / Server, select from the Action menus.</li>
+          <li>To assign Applications or Servers to a Deployment, drag them on to it</li>
+          <li>To see details of a Deployment, hover over it.</li>
+          <li>To go live or undeploy, mark the checkbox and use the Action menu</li>
+          <li>To remove Applications or Servers from your deployment, mark the checkbox beside them, then use the action dropdown</li>
           
         </ol>
       </div>
@@ -76,9 +76,9 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="#" data-bind="click: addDeployment"><i class="icon-plus-sign"></i> New</a></li>
-              <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
-              <li><a href="#"><i class="icon-plane"></i> Deploy</a></li>
-              <li><a href="#"><i class="icon-stop"></i> Undeploy</a></li>
+              <li><a href="#" data-bind="click: removeSelectedDeployments"><i class="icon-minus-sign"></i> Remove</a></li>
+              <li><a href="#" data-bind="click: deploySelectedDeployments"><i class="icon-plane"></i> Deploy</a></li>
+              <li><a href="#" data-bind="click: undeploySelectedDeployments"><i class="icon-stop"></i> Undeploy</a></li>
             </ul>
           </div>
           <h3>Deployments</h3>
@@ -86,16 +86,18 @@
             <thead>
               <tr>
                 <th></th>
-                <th>status</th>
                 <th>name</th>
+                <th>status</th>
               </tr>
             </thead>
             <tbody data-bind="foreach: {data: deployments, afterRender: postRenderDeployment}">
-              <tr data-bind="css: { success: isDeployed, error: !isDeployed() }" >
-                <input type="hidden" name="id" data-bind="value: id" />
-                <td><input type="checkbox" name="vehicle" value="Bike" /></td>
-                <td data-bind="text: status"></td>
+              <tr data-bind="css: { success: isDeployed, error: !isDeployed() }" class="dropContainer">
+                <td>
+                    <input type="checkbox" class="selectedEntity" />
+                    <input type="hidden" name="id" data-bind="value: id" />
+                </td>
                 <td><input type="text" data-bind="value: name"></input></td>
+                <td data-bind="text: status"></td>
               </tr>
             </tbody>
           </table>
@@ -109,7 +111,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="#" data-bind="click: addApplication"><i class="icon-plus-sign"></i> New</a></li>
-              <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
+              <li><a href="#" data-bind="click: removeSelectedApplications"><i class="icon-minus-sign"></i> Remove</a></li>
             </ul>
           </div>
           <h3>Applications</h3>
@@ -120,10 +122,12 @@
                 <th>name</th>
               </tr>
             </thead>
-            <tbody data-bind="foreach: allApplications">
-              <tr>
-                <input type="hidden" name="id" data-bind="value: id" />
-                <td><input type="checkbox" name="vehicle" value="Bike" /></td>
+            <tbody data-bind="foreach: {data: allApplications, afterRender: postRenderApplication}">
+              <tr class="dragContainer">
+                <td>
+                    <input type="checkbox" class="selectedEntity" />
+                    <input type="hidden" name="id" data-bind="value: id" />
+                </td>
                 <td><input type="text" data-bind="value: name"></input></td>
               </tr>
             </tbody>
@@ -138,7 +142,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><a href="#" data-bind="click: addServer"><i class="icon-plus-sign"></i> New</a></li>
-              <li><a href="#"><i class="icon-minus-sign"></i> Remove</a></li>
+              <li><a href="#" data-bind="click: removeSelectedServers"><i class="icon-minus-sign"></i> Remove</a></li>
             </ul>
           </div>
           <h3>Servers</h3>
@@ -149,10 +153,12 @@
                 <th>name</th>
               </tr>
             </thead>
-            <tbody data-bind="foreach: allServers()">
-              <tr>
-                <input type="hidden" name="id" data-bind="value: id" />
-                <td><input type="checkbox" name="vehicle" value="Bike" /></td>
+            <tbody data-bind="foreach: {data: allServers, afterRender: postRenderServer}">
+              <tr class="dragContainer">
+                <td>
+                    <input type="checkbox" class="selectedEntity" />
+                    <input type="hidden" name="id" data-bind="value: id" />
+                </td>
                 <td><input type="text" data-bind="value: name"></input></td>
               </tr>
             </tbody>
@@ -160,8 +166,12 @@
         </div>
         
       </div><!-- /row-fluid -->
-
-
+      
+      <!-- drag icons (hack - TODO: fix) -->
+      <img id="appDragIcon" src="img/appIconSmall.png" style="position: fixed; left: 2000px;" width="40" height="40" alt="AppIconSmall">
+      <img id="serverDragIcon" src="img/serverIconSmall.png" style="position: fixed; left: 2000px;" width="48" height="48" alt="ServerIconSmall">
+      <!-- <img id="dragImage" style="position: fixed; left: 2000px;" src="img/logo_main.gif" width="340" height="60" alt="Logo Main"> -->
+      
     </div> <!-- /container -->
 
     <script src="ext/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>

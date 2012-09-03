@@ -28,7 +28,7 @@
         self.isDeployed = ko.observable(isDeployed);
         
         self.addApplication = function(application) {
-            self.applications.push(appliction);
+            self.applications.push(application);
         };
         self.addServer = function(server) {
             self.servers.push(server);
@@ -47,6 +47,10 @@
     
     function DeployViewModel (apps, servers, deploys) {
         var self = this;
+        
+        // drag icons
+        var appDragIcon = $("#appDragIcon")[0];
+        var serverDragIcon = $("#serverDragIcon")[0];
         
         self.allApplications = ko.observableArray(apps);
         
@@ -86,6 +90,75 @@
         
         self.removeDeployment = function(deployment) {
             self.deployments.remove(deployment);
+        };
+        
+        function getSelectedIds(arr) {
+            // get selected deployments
+            var selected = $(arr).find(".selectedEntity:checked");
+            return _.map(selected, function(el) {
+                return $(el).next().val();
+            });
+        }
+        
+        function clearSelectedCheckBoxes(arr) {
+            $(arr).find(".selectedEntity:checked").attr('checked', false);
+        }
+        
+        self.removeSelectedDeployments = function() {
+            // get selected
+            var ids = getSelectedIds($("#deployments"));
+            for (var i=0; i < ids.length; i++) {
+                // lookup
+                var d = self.getDeployment(ids[i]);
+                // remove
+                self.deployments.remove(d);
+            };
+        };
+        
+        self.removeSelectedApplications = function() {
+            // get selected
+            var ids = getSelectedIds($("#applications"));
+            for (var i=0; i < ids.length; i++) {
+                // lookup
+                var d = self.getApplication(ids[i]);
+                // remove
+                self.allApplications.remove(d);
+            };
+        };
+        
+        self.removeSelectedServers = function() {
+            // get selected
+            var ids = getSelectedIds($("#servers"));
+            for (var i=0; i < ids.length; i++) {
+                // lookup
+                var d = self.getServer(ids[i]);
+                // remove
+                self.allServers.remove(d);
+            };
+        };
+        
+        self.deploySelectedDeployments = function() {
+            // get selected
+            var ids = getSelectedIds($("#deployments"));
+            for (var i=0; i < ids.length; i++) {
+                // lookup
+                var d = self.getDeployment(ids[i]);
+                // deploy
+                d.isDeployed(true);
+            };
+            clearSelectedCheckBoxes($("#deployments"));
+        };
+        
+        self.undeploySelectedDeployments =function() {
+            // get selected
+            var ids = getSelectedIds($("#deployments"));
+            for (var i=0; i < ids.length; i++) {
+                // lookup
+                var d = self.getDeployment(ids[i]);
+                // undeploy
+                d.isDeployed(false);
+            };
+            clearSelectedCheckBoxes($("#deployments"));
         };
         
         // === lookup functions ===
@@ -135,14 +208,78 @@
             return generateNextId(self.deployments());
         }
         
-        self.postRenderDeployment = function(domArr, deployment) {
+        // ==== post-render callbacks ===
+        
+        function bindDragHandler(el, id, type, icon, iconOffsetX, IconOffsetY) {            
+            el.attr("draggable", true)
+                        .bind("dragstart", function(event) {
+                            event.originalEvent.dataTransfer.setData("id", id);
+                            event.originalEvent.dataTransfer.setData("type", type);
+                            event.originalEvent.dataTransfer.setDragImage(icon, iconOffsetX, IconOffsetY);
+                        });
+        }
+        
+        self.postRenderApplication = function(domArr, application) {
+            bindDragHandler($(domArr[1]), application.id, "application", appDragIcon, -10, -10);
+        };
+        
+        self.postRenderServer = function(domArr, server) {
+            bindDragHandler($(domArr[1]), server.id, "server", serverDragIcon, -6, -5);
+        };
+        
+        self.postRenderDeployment = function(domArr, deployment) {            
+            // the DOM element representing this deployment
+            var el = $(domArr[1]);
+            
+            // add details popover (temporary! TODO: find better solution for displaying details)
+            var details = getDetailsAsHtml(deployment);
+            el.popover({
+                content: details,
+                trigger: 'hover',
+                placement: 'top'
+            });
+            
+            // bind "drop" handlers
+            el.bind("dragenter", function(event) {
+                $(this).addClass("over");
+            }).bind("dragleave", function(event) {
+                $(this).removeClass("over");
+            }).bind("dragover", function(event) {
+                event.preventDefault();
+            }).bind("drop", function(event) {
+                event.preventDefault();
+                $(this).removeClass("over");
+                var sourceId = event.originalEvent.dataTransfer.getData("id"); 
+                var sourceType = event.originalEvent.dataTransfer.getData("type");
+                console.log("dropped with with id=" + sourceId + " and type=" + sourceType);
+                if (sourceType=="application") {
+                    var app = self.getApplication(sourceId);
+                    deployment.addApplication(app);
+                } else if (sourceType=="server") {
+                    var server = self.getServer(sourceId);
+                    deployment.addServer(server);
+                }
+                    
+                // at this point, mode is updated ok.
+                // BUT... popover is not updating...
+                // So here is a hack to reset it...                
+                el.popover('destroy');
+                el.popover({
+                    content: getDetailsAsHtml(deployment),
+                    trigger: 'hover',
+                    placement: 'top'
+                });
+                
+            });   
+        };
+        
+        function getDetailsAsHtml(deployment) {
             // TEMPORARY display
             // TODO: this should be
             //       a) done as a template
             //       b) be modifiable
             //       c) be persistant
             
-            var el = $(domArr[1]);
             var apps = deployment.applications();
             var servers = deployment.servers();
             var strContent = "";
@@ -165,15 +302,8 @@
                 strContent += i==(servers.length-1) ? "" : ", ";
             };
             strContent += "</p>";
-            
-            // add popover
-            el.popover({
-                content: strContent,
-                trigger: 'hover',
-                placement: 'top'
-                
-            });       
-        };    
+            return strContent;
+        }    
     }
     
     // ==== mock initial data =============================
