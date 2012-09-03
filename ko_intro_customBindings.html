@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>Title</title>
+<style>
+
+</style>
+<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<link rel="stylesheet" href="css/custombindings.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+</head>
+<body>
+
+    <h3 data-bind="text: question"></h3>
+    <p>Please distribute <b data-bind="text: pointsBudget"></b> points between the following options.</p>
+
+    <table>
+        <thead><tr><th>Option</th><th>Importance</th></tr></thead>
+        <tbody data-bind="foreach: answers">
+            <tr>
+                <td data-bind="text: answerText"></td>
+                <td data-bind="starRating: points"></td>
+            </tr>    
+        </tbody>
+    </table>
+
+    <h3 data-bind="fadeVisible: pointsUsed() > pointsBudget">You've used too many points! Please remove some.</h3>
+    <p>You've got <b data-bind="text: pointsBudget - pointsUsed()"></b> points left to use.</p>
+    <button data-bind="jqButton: {enable: pointsUsed() == pointsBudget}, click: save">Finished</button>
+
+<script src="ext/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="ext/knockout-2.1.0.debug.js" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="ext/knockout-sortable.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="ext/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" charset="utf-8">
+ko.bindingHandlers.starRating = {
+    init: function(element, valueAccessor) {
+        $(element).addClass("starRating");
+        for (var i=0; i < 5; i++) {
+            $("<span/>").appendTo(element);
+        };
+        
+        // handle mouse events on the stars
+        $("span", element).each(function(index) {
+            $(this).hover(
+                function() { $(this).prevAll().add(this).addClass("hoverChosen") },
+                function() { $(this).prevAll().add(this).removeClass("hoverChosen") }
+            ).click(function() {
+                var observable = valueAccessor();   // Get the associated observable
+                observable(index+1);                // Write the new rating to it
+            });
+            // NOTICE - chaining of jQuery handlers above
+        });
+    },
+    
+    update: function(element, valueAccessor) {
+        var observable = valueAccessor(); // NOTICE - how semantics of observable are unspecified - this is up to the binding
+                                          //        - super flexible!
+        $("span", element).each(function(index) {
+            $(this).toggleClass("chosen", index < observable())
+        });
+    }
+};
+
+ko.bindingHandlers.jqButton = {
+    init: function(element) {
+        $(element).button(); // Turns the elements into a jQueryUI button
+    },
+    
+    update: function(element, valueAccessor) {
+        var currentValue = valueAccessor();
+        $(element).button("option", "disabled", currentValue.enable === false);
+    }
+};
+
+ko.bindingHandlers.fadeVisible = {
+    init : function(element, valueAccessor) {
+        var shouldDisplay = valueAccessor();
+        $(element).toggle(shouldDisplay);
+        // i.e. if should display, display it!
+        //      if not, don't!
+        // NOTE: Of course the el will be shown for a split second initially before
+        // ko.applyBindings() is called.
+        // At this point, the page is not yet assembled - the table has not been filled.
+        // So actually there will be an unnoticably fast flicker as the page is assembled,
+        // but this is negligible.
+    },
+    
+    update: function(element, valueAccessor) {
+        var shouldDisplay = valueAccessor();
+        shouldDisplay ? $(element).fadeIn() : $(element). fadeOut();
+        // i.e. If should display, we call fadeIn() - don't worry, if it's already showing nothing happens
+        //      If not, we call fadeOut - don't worry, if it's already not showing nothing happens
+    }
+};
+
+function Answer(text) {
+    this.answerText = text;
+    this.points = ko.observable(1);
+}
+
+function SurveyViewModel(question, pointsBudget, answers) {
+    this.question = question;
+    this.pointsBudget = pointsBudget;
+    this.answers = $.map(answers, function(text) { return new Answer(text) });
+    this.save = function() { alert('To do') };
+                       
+    this.pointsUsed = ko.computed(function() {
+        var total = 0;
+        for (var i = 0; i < this.answers.length; i++)
+            total += this.answers[i].points();
+        return total;        
+    }, this);
+}
+
+var vm = new SurveyViewModel("Which factors affect your technology choices?", 10, [
+   "Functionality, compatibility, pricing - all that boring stuff",
+   "How often it is mentioned on Hacker News",    
+   "Number of gradients/dropshadows on project homepage",        
+   "Totally believable testimonials on project homepage"
+]);
+ko.applyBindings(vm);
+</script>
+
+</body>
+</html>
